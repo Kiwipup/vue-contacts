@@ -6,6 +6,21 @@ let app = new Vue({
 
     data: {
 
+        buttonText: 'add',
+        showForm: true,
+        toggleText: 'hide form',
+
+        formFirst: '',
+
+        formLast: '',
+
+        formEmail: '',
+
+        formPhone: '',
+
+        nextId: 3,
+
+
         contacts: [
             {
                 id: 1,
@@ -26,7 +41,42 @@ let app = new Vue({
     },
 
     methods: {
+        addOrUpdateContact: function () {
+          console.log('adding or updating contact');
 
+          //what kind of input validation do we want to do?
+          let newContact = {
+            id: this.nextId,
+            firstname: this.formFirst,
+            lastname: this.formLast,
+            emailaddr: this.formEmail,
+            phonenum: this.formPhone
+          };
+
+          this.nextId++;
+
+          this.contacts.push(newContact);
+
+          this.formFirst = '';
+          this.formLast = '';
+          this.formEmail = '';
+          this.formPhone = '';
+
+        },
+
+        sortContacts: function (sortField)  {
+
+          console.log('sorting contacts by [" + sortField + "]');
+        },
+
+
+    toggleForm: function () {
+      console.log('showing or hidning form');
+      this.showForm = !this.showForm;
     }
+
+  }
+
+
 
 });
