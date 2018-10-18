@@ -6,7 +6,6 @@ let app = new Vue({
 
     data: {
 
-        buttonText: 'Add',
         showForm: true,
         toggleText: 'hide form',
 
@@ -69,7 +68,7 @@ let app = new Vue({
           this.formPhone = '';
           this.formOldId = '';
 
-          this.buttonText = 'Add';
+          this.cancel();
 
         },
 
@@ -84,7 +83,6 @@ let app = new Vue({
           this.formOldId = this.contacts[index].id;
 
 
-          this.buttonText = 'Update';
           this.showForm = true;
 
         },
@@ -119,6 +117,17 @@ let app = new Vue({
       }
 
       return index;
+
+    },
+
+    cancel: function () {
+
+      this.formFirst = '';
+      this.formLast = '';
+      this.formEmail = '';
+      this.formPhone = '';
+      this.formOldId = '';
+
 
     }
 

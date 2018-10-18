@@ -33,7 +33,8 @@
                     <label for="phonenum" class="text-warning">Phone Number:</label>
                     <input id="phonenum" v-model="formPhone" type="text" class="form-control  bg-secondary text-light">
                 </div>
-                <button type="button" class="btn btn-info" v-on:click="addOrUpdateContact">{{ buttonText }}</button>
+                <button type="button" class="btn btn-info" v-on:click="addOrUpdateContact">{{ formOldId == '' ? 'Add' : 'Update' }}</button>
+                <button type="button" class="ml-3 btn btn-danger" v-on:click="cancel">Clear Form</button>
                 <input type="hidden" v-bind:value="formOldId">
             </form>
           </div>
