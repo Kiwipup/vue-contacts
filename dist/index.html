@@ -15,6 +15,8 @@
         <div id="app" class="mt-4" v-cloak>
 
             <a class="mt-5" href="#" v-on:click="toggleForm">{{ showForm ? 'Hide form' : 'Show Form' }}</a>
+
+            <div class="alert alert-danger" v-if="errorMessage"><span v-html="errorMessage"></span></div>
             <div class="mt-4">
             <form class="clearfix" v-if="showForm">
                 <div class="form-group">
@@ -38,18 +40,20 @@
                 <input type="hidden" v-bind:value="formOldId">
             </form>
           </div>
-            <table class="table mt-5">
+
+          <input type="text" placeholder="filter contacts...." v-model="filterText" class="mt-5 bg-secondary text-light form-control">
+            <table id="contactList" class="table">
                 <thead>
                     <tr>
                       <th><span class="font-weight-light">Actions</span></th>
-                        <th><a href="#" v-on:click="sortContacts('firstname')">First Name</a></th>
-                        <th><a href="#" v-on:click="sortContacts('lastname')">Last Name</a></th>
-                        <th><a href="#" v-on:click="sortContacts('emailaddr')">Email Address</a></th>
-                        <th><a href="#" v-on:click="sortContacts('phonenum')">Phone</a></th>
+                        <th><a class="mr-2" href="#contactList" v-on:click="sortContacts('firstname')">First Name</a><i v-if="sortIsAscending && sortByField == 'firstname'" class="fas fa-sort-up"></i><i v-if="!sortIsAscending && sortByField == 'firstname'" class="fas fa-sort-down"></i></th>
+                        <th><a class="mr-2" href="#contactList" v-on:click="sortContacts('lastname')">Last Name</a><i v-if="sortIsAscending && sortByField == 'lastname'" class="fas fa-sort-up"></i><i v-if="!sortIsAscending && sortByField == 'lastname'" class="fas fa-sort-down"></i></th>
+                        <th><a class="mr-2" href="#contactList" v-on:click="sortContacts('emailaddr')">Email Address</a><i v-if="sortIsAscending && sortByField == 'emailaddr'" class="fas fa-sort-up"></i><i v-if="!sortIsAscending && sortByField == 'emailaddr'" class="fas fa-sort-down"></i></th>
+                        <th><a class="mr-2" href="#contactList" v-on:click="sortContacts('phonenum')">Phone</a><i v-if="sortIsAscending && sortByField == 'phonenum'" class="fas fa-sort-up"></i><i v-if="!sortIsAscending && sortByField == 'phonenum'" class="fas fa-sort-down"></i></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="contact in contacts">
+                    <tr v-for="contact in sortedFilteredContacts">
                       <td><i class="fas fa-user-edit text-success" v-on:click="editContact(contact.id)"></i><i v-on:click="deleteContact(contact.id)"class="pl-2 fas fa-user-minus text-danger"></i></td>
                         <td>{{ contact.firstname }}</td>
                         <td>{{ contact.lastname }}</td>
@@ -58,6 +62,8 @@
                     </tr>
                 </tbody>
             </table>
+
+            <div v-if="contacts.length == 0" class="text-center text-info">No contacts have been added!</div>
 
         </div>
 

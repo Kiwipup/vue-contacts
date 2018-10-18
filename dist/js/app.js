@@ -7,6 +7,7 @@ let app = new Vue({
     data: {
 
         showForm: true,
+        errorMessage: '',
         toggleText: 'hide form',
 
         formFirst: '',
@@ -18,30 +19,92 @@ let app = new Vue({
         formPhone: '',
         formOldId: '',
 
-        nextId: 3,
+        nextId: 1,
+
+        sortIsAscending: false,
+        sortByField: '',
+
+        filterText: '',
 
 
-        contacts: [
-            {
-                id: 1,
-                firstname: 'John',
-                lastname: 'Deer',
-                emailaddr: 'jdeer@example.com',
-                phonenum: '867-5309'
-            },
-            {
-                id: 2,
-                firstname: 'Jane',
-                lastname: 'Doe',
-                emailaddr: 'janed@example.com',
-                phonenum: '859-123-4567'
-            }
-        ]
+        contacts: []
 
     },
 
+    mounted() {
+      if(localStorage.getItem('contacts')) {
+        this.contacts = JSON.parse(localStorage.getItem('contacts'));
+
+
+      }
+        this.resetNextId();
+    },
+
+      computed: {
+
+        sortedFilteredContacts: function () {
+
+          let filteredContacts = this.contacts;
+          let search = this.filterText.trim().toLowerCase();
+
+          if(search) {
+
+            filteredContacts = filteredContacts.filter(function(contact){
+
+              if(contact.firstname.toLowerCase().indexOf(search) !== -1 ||contact.lastname.toLowerCase().indexOf(search) !== -1 ||contact.emailaddr.toLowerCase().indexOf(search) !== -1 ||
+              contact.phonenum.toLowerCase().indexOf(search) !== -1){
+
+              return contact;
+            }
+          });
+        }
+
+        filteredContacts.sort(this.compare);
+
+        //if()
+
+          //return filteredContacts;
+
+        }
+
+      },
+
+
+
+
     methods: {
+
+          compare: function (a, b) {
+
+            //sort is ascending
+            //sortByField
+              if(a[this.sortByField] > b[this.sortByField]){
+                return 1;
+              }
+              else if(a[this.sortByField] < b[this.sortByField]){
+                return -1;
+
+              }
+              return 0;
+          },
+
         addOrUpdateContact: function () {
+
+          let validemail = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
+          let validPhone = /[0-9-xX\.+(\)]+/;
+
+          if(!this.formFirst && !this.formLast) {
+            this.errorMessage = "Please fill in either <strong>First Name</strong> or <strong>Last Name</strong> or both";
+          } else if (this.formEmail && this.formEmail.match(validemail)){
+            this.errorMessage = 'email addresses must follow the usual pattern';
+          }
+
+          else if (this.formPhone && !this.formPhone.match(validPhone)) {
+            this.errorMessage = "only certain characters are allowed in the phone number field.";
+          }
+
+          else{
+
           console.log('adding or updating contact');
 
           if(this.formOldId != '') {
@@ -62,6 +125,11 @@ let app = new Vue({
 
           this.contacts.push(newContact);
 
+          localStorage.setItem('contacts', JSON.stringify(this.contacts));
+          this.contacts = JSON.parse(localStorage.getItem('contacts'));
+
+
+
           this.formFirst = '';
           this.formLast = '';
           this.formEmail = '';
@@ -69,6 +137,7 @@ let app = new Vue({
           this.formOldId = '';
 
           this.cancel();
+        }
 
         },
 
@@ -93,9 +162,17 @@ let app = new Vue({
 
         },
 
-        sortContacts: function (sortField)  {
+        sortContacts: function (request)  {
 
-          console.log('sorting contacts by [" + sortField + "]');
+          console.log('sorting contacts by [' + request + ']');
+          if(request == this.sortByField) {
+            this.sortIsAscending = !this.sortIsAscending;
+
+
+          }else{
+          this.sortByField = request;
+          this.sortIsAscending = true;
+        }
         },
 
 
@@ -128,6 +205,21 @@ let app = new Vue({
       this.formPhone = '';
       this.formOldId = '';
 
+
+    },
+
+    resetNextId: function () {
+
+      let maxId = 0;
+
+      this.contacts.forEach(function(contact){
+        if (contact.id > maxId) {
+          maxId = contact.id;
+        }
+
+      });
+
+      this.nextId = ++maxId;
 
     }
 

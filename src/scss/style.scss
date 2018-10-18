@@ -2,10 +2,18 @@
   display:none;
 }
 
-
 $test: 'test';
+
+$input-placeholder-color: #fff;
+$enable-rounded: false;
+$input-border-width: 0;
+
 
 
 
 // Bootstrap and its default variables
 @import "../../node_modules/bootstrap/scss/bootstrap";
+
+.table, th {
+  border-top: none;
+}
