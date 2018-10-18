@@ -6,7 +6,7 @@ let app = new Vue({
 
     data: {
 
-        buttonText: 'add',
+        buttonText: 'Add',
         showForm: true,
         toggleText: 'hide form',
 
@@ -17,6 +17,7 @@ let app = new Vue({
         formEmail: '',
 
         formPhone: '',
+        formOldId: '',
 
         nextId: 3,
 
@@ -44,6 +45,11 @@ let app = new Vue({
         addOrUpdateContact: function () {
           console.log('adding or updating contact');
 
+          if(this.formOldId != '') {
+            //logic for removing the old copy of this contact
+            this.deleteContact(this.formOldId);
+          }
+
           //what kind of input validation do we want to do?
           let newContact = {
             id: this.nextId,
@@ -61,6 +67,31 @@ let app = new Vue({
           this.formLast = '';
           this.formEmail = '';
           this.formPhone = '';
+          this.formOldId = '';
+
+          this.buttonText = 'Add';
+
+        },
+
+        editContact: function (contactId) {
+
+          let index = this.findIndexById(contactId);
+
+          this.formFirst = this.contacts[index].firstname;
+          this.formLast = this.contacts[index].lastname;
+          this.formEmail = this.contacts[index].emailaddr;
+          this.formPhone = this.contacts[index].phonenum;
+          this.formOldId = this.contacts[index].id;
+
+
+          this.buttonText = 'Update';
+          this.showForm = true;
+
+        },
+
+        deleteContact: function (contactId) {
+          let index = this.findIndexById(contactId);
+          this.contacts.splice(index, 1);
 
         },
 
@@ -73,6 +104,22 @@ let app = new Vue({
     toggleForm: function () {
       console.log('showing or hidning form');
       this.showForm = !this.showForm;
+    },
+
+    findIndexById: function (contactId) {
+
+      let index = -1;
+
+      for (let i = 0; i < this.contacts.length; i++) {
+
+        if(contactId == this.contacts[i].id) {
+
+          index = i;
+        }
+      }
+
+      return index;
+
     }
 
   }
